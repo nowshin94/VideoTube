@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title_block %} Home {% endblock %}
+{% block body_block %}
+<div class="col-sm-3" style="float: right;"> <br>
+  <h4 style="color:green;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif"><i> Catagories of Video Available:</i></h4> <br>
+  <ol class="list-group">
+    {% for a in categories %}
+       <li class="list-group-item list-group-item-success" style="font-family: cursive;"><h5>{{ a }}</h5></li>
+    {% endfor %}
+  </ol>
+</div>
+
+{% for a in categories %}
+{% for b in a.category.all %}
+<br>
+<h5>{{b.video_title}}</h5>
+<h6><i>{{b.upload_date}}</i></h6>
+
+  <div class="col-sm-4 pl-0">
+    <img src="/media/{{b.video_image}}" alt="{{b.video_title}}" title="{{b.video_title}}" width="100%">
+  </div>
+  <div class="col-sm-4 pl-0"> <br>
+    {% if user.is_authenticated %}
+    <a class="btn btn-md btn-danger" href="{% url 'App_Video:video_details' slug=b.slug %}"><i class="fa fa-play-circle" aria-hidden="true"></i> Watch</a></p>
+    {% else %}
+    <a class="btn btn-md btn-danger" href="{% url 'App_Login:signup' %}"><i class="fa fa-play-circle" aria-hidden="true"></i> Watch</a></p>
+    {% endif %}
+    
+    <h6>Uploaded By: <a href="#">@{{b.author}}</a></h6>
+    <h6>{{b.liked_video.count}} Likes | {{b.video_comment.count }} Comments </h6>
+  </div>
+
+<hr>
+{% endfor %}
+{% endfor %}
+{% endblock %}

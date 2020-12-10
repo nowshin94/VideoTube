@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- Popper JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <title>{% block title_block %} VideoTube {% endblock %}</title>
+  
+</head>
+<body>
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'index' %}"><img src="/media/logo.png" width="50px"></a>
+      </li>
+      {% if user.is_authenticated %}
+      <div class="nav-item dropdown a">
+        <a class="nav-link dropdown-toggle " href="#" id="navbardrop" data-toggle="dropdown" style="padding-top: 17px;">
+          @{{user.username}}
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item m-auto" href="{% url 'App_Video:create_video' %}">Upload</a>
+          <a class="dropdown-item m-auto" href="{% url 'App_Video:my_videos' %}">My Vidoes</a>
+          <a class="dropdown-item m-auto" href="{% url 'App_Login:profile' %}">Your Profile</a>
+          <hr>
+          <a class="dropdown-item m-auto" href="{% url 'App_Login:logout' %}">Logout</a>
+          
+        </div>
+      </div>
+      {% else %}
+
+      <li class="nav-item m-auto">
+        <a class="nav-link" href="{% url 'App_Login:signup' %}">Sign Up</a>
+      </li>
+      <li class="nav-item m-auto">
+        <a class="nav-link" href="{% url 'App_Login:login' %}">Login</a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+  <div class="container" style="padding-top:20px">
+    {% block body_block %}
+    
+    {% if result  %}
+    <h3 style="color: green">Videos From The Search:</h3> <br>
+        {% for category in result %}
+            {% for vid in category.category.all %} <hr>
+                 <h5 class="pl-0">{{vid.video_title}}</h5>
+                 <h6 class="pl-0"><i>{{vid.upload_date}}</i></h6>
+                 <div class="row pl-0">
+                    <div class="col-sm-4 ">
+                      <img src="/media/{{vid.video_image}}" alt="{{vid.video_title}}" title="{{vid.video_title}}" width="100%">
+                    </div>
+                    <div class="col-sm-8 pl-0">
+                      {% if user.is_authenticated %}
+                      <a class="btn btn-md btn-danger" href="{% url 'App_Video:video_details' slug=vid.slug %}"><i class="fa fa-play-circle" aria-hidden="true"></i> Watch</a></p>
+                      {% else %}
+                      <a class="btn btn-md btn-danger" href="{% url 'App_Login:signup' %}"><i class="fa fa-play-circle" aria-hidden="true"></i> Watch</a></p>
+                      {% endif %}
+                      
+                      <h6>Uploaded By: <a href="#">@{{vid.author}}</a></h6>
+                      <h6>{{vid.liked_video.count}} Likes | {{vid.video_comment.count }} Comments </h6>
+                    </div>
+                  </div>
+                 {% endfor %} <br> <hr>
+                
+        {% endfor %}
+        <form>
+            <input class="btn btn-block btn-info" type="button" value="Go back!" onclick="history.back()">
+        </form>
+    {% else %}
+    
+    <h3 style="color: red; text-align: center;">Video Not Found!</h3> <br>
+    <form>
+        <input class="btn btn-block btn-info" type="button" value="Go back!" onclick="history.back()">
+    </form>
+    
+    {% endif %}
+ 
+    {% endblock %}
+  </div>
+
+</body>
+</html>
